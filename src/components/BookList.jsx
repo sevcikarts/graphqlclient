@@ -1,15 +1,15 @@
-import React, { useState,useEffect } from "react";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import React, { useState } from "react";
+import { useQuery, useMutation } from "@apollo/client";
 
 import { getBooksQuery, delBookById } from "../queries/queries";
 
 import Modal from "./Modal";
 
 const BookList = () => {
-  const { loading, error, data } = useQuery(getBooksQuery);
+  const { loading, data } = useQuery(getBooksQuery);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [delBook, { upData }] = useMutation(delBookById);
+  const [delBook] = useMutation(delBookById);
 
   const deleteBook = (ide) => {
     delBook({
@@ -17,10 +17,13 @@ const BookList = () => {
       refetchQueries: [{ query: getBooksQuery }],
     });
   };
-  
-  const [selectedID, setSelectedID] = useState("");
 
- 
+  const [selectedID, setSelectedID] = useState(null);
+
+  const openModal = (bookID) => {
+    setSelectedID(bookID);
+    setIsOpen(true);
+  };
 
   const loaddata = () => {
     if (loading) {
@@ -30,9 +33,7 @@ const BookList = () => {
         return (
           <li key={book.id}>
             <button onClick={() => deleteBook(book.id)}>x</button>
-            <p onClick={() => (setSelectedID(book.id), setIsOpen(true))}>
-              {book.name}
-            </p>
+            <p onClick={() => openModal(book.id)}>{book.name}</p>
           </li>
         );
       });
@@ -45,9 +46,7 @@ const BookList = () => {
       <Modal
         open={isOpen}
         selectedID={selectedID}
-       
-        
-        onClose={() => (setIsOpen(false),setSelectedID()) }
+        onClose={() => setIsOpen(false)}
       ></Modal>
     </div>
   );
