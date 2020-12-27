@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 import ReactDom from 'react-dom'
 import BookDetail from "./BookDetail";
 
@@ -28,15 +28,20 @@ const OVERLAY_STYLES = {
 }
 
 export default function Modal({ open, selectedID,setSelectedID, onClose }) {
+const [isLoad, setIsLoad] = useState(false);
 
-  if (!open) return null
+  
+
+  if (!open ) return null
+  
   return ReactDom.createPortal(
     <>
       <div style={OVERLAY_STYLES} />
       <div style={MODAL_STYLES}>
         <div className="bookDetail"> 
         <BookDetail selectedID={selectedID}
-         setSelectedID={setSelectedID}/> 
+         setSelectedID={setSelectedID}
+         setIsLoad={setIsLoad}/> 
       </div>
       <button onClick={onClose} >Close</button>
       </div>

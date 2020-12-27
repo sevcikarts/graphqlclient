@@ -2,14 +2,17 @@ import React  from "react";
 import { useQuery } from "@apollo/client";
 import { getBookQuery } from "../queries/queries";
 
-const BookDetail = ({ selectedID,setSelectedID }) => {
+const BookDetail = ({ selectedID,setIsLoad }) => {
   const { loading, error, data } = useQuery(getBookQuery, {
     variables: { id: selectedID },
   });
 
-  const loaddata = () => {
-    const { book } =  data;
-    if (book) {
+  const loaddata = () => {  
+   
+    if (loading) {
+      return <p>Loading book...</p>;
+    } else {
+   const { book } =  data;
       return (
         <>
           <h2>{book.name}</h2>
@@ -27,12 +30,10 @@ const BookDetail = ({ selectedID,setSelectedID }) => {
           </ul>
         </>
       );
-    } else {
-      return <div>No book selected...</div>;
-    }
+    } 
   };
 
-  return <div>{data  && loaddata()}</div>;
+  return <div>{ loaddata()}</div>;
 };
 
 export default BookDetail;

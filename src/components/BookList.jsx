@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 import { getBooksQuery, delBookById } from "../queries/queries";
 
 import Modal from "./Modal";
@@ -20,6 +20,8 @@ const BookList = () => {
 
   const [selectedID, setSelectedID] = useState(null);
 
+  const nodeRef = useRef(null);
+
   const openModal = (bookID) => {
     setSelectedID(bookID);
     setIsOpen(true);
@@ -27,22 +29,28 @@ const BookList = () => {
 
   const loaddata = () => {
     if (loading) {
-      return <p>Loading books...</p>;
+      return <li>Loading books...</li>;
     } else {
-      return data.books.map((book) => {
-        return (
-          <li key={book.id}>
-            <button onClick={() => deleteBook(book.id)}>x</button>
-            <p onClick={() => openModal(book.id)}>{book.name}</p>
-          </li>
-        );
-      });
+      return (
+        <TransitionGroup  component="ul" className="tunes-list">
+          {data.books.map((book) => {
+            return (
+              <CSSTransition  nodeRef={nodeRef}   key={book.id} timeout={200} classNames="book">
+                <li  ref={nodeRef} key={book.id} className="bookContainer">
+                  <button onClick={() => deleteBook(book.id)}>x</button>
+                  <p onClick={() => openModal(book.id)}>{book.name}</p>
+                </li>
+              </CSSTransition>
+            );
+          })}
+        </TransitionGroup>
+      );
     }
   };
 
   return (
     <div className="books">
-      <ul className="bookList">{loaddata()}</ul>
+      <div>{loaddata()}</div>
       <Modal
         open={isOpen}
         selectedID={selectedID}
